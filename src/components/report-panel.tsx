@@ -1,108 +1,125 @@
+"use client";
+
+import { useState } from "react";
 import type { ComplianceAnalysis } from "@/lib/analysis";
 
 type ReportPanelProps = {
   analysis: ComplianceAnalysis;
 };
 
-const urgencyTone = {
-  High: "bg-[rgba(180,87,63,0.14)] text-[var(--warning)] border-[rgba(180,87,63,0.22)]",
-  Medium:
-    "bg-[rgba(203,139,62,0.16)] text-[color:var(--accent)] border-[rgba(203,139,62,0.24)]",
-  Low: "bg-[rgba(25,53,43,0.12)] text-[var(--primary)] border-[rgba(25,53,43,0.18)]",
+const urgencyConfig = {
+  High: { cls: "badge-high", label: "HIGH URGENCY", icon: "⚠" },
+  Medium: { cls: "badge-medium", label: "MEDIUM URGENCY", icon: "◈" },
+  Low: { cls: "badge-low", label: "LOW URGENCY", icon: "✦" },
 } as const;
 
 export function ReportPanel({ analysis }: ReportPanelProps) {
+  const [copied, setCopied] = useState(false);
+  const cfg = urgencyConfig[analysis.urgency] ?? urgencyConfig.Medium;
+
+  function copyActions() {
+    const text = [
+      `MA'AT COMPLIANCE REPORT`,
+      `Urgency: ${analysis.urgency}`,
+      `Deadline: ${analysis.deadline}`,
+      ``,
+      `WHAT THIS MEANS`,
+      analysis.summary,
+      ``,
+      `ACTIONS`,
+      ...analysis.actions.map((a, i) => `${i + 1}. ${a}`),
+      ``,
+      `RISKS IF IGNORED`,
+      ...analysis.risks.map((r) => `• ${r}`),
+      ``,
+      `NEXT STEP`,
+      analysis.nextStep,
+      ``,
+      `DISCLAIMER`,
+      analysis.disclaimer,
+    ].join("\n");
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    });
+  }
+
   return (
-    <section className="glass-panel rounded-[2rem] p-6 md:p-8">
-      <div className="flex flex-col gap-4 border-b border-[var(--line)] pb-6 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-3">
-          <p className="section-kicker">Structured output</p>
-          <h2 className="font-[family:var(--font-display)] text-3xl leading-tight md:text-4xl">
-            Action report
-          </h2>
-          <p className="max-w-2xl text-sm leading-7 text-[var(--muted)] md:text-base">
-            Ma&apos;at should feel like a decision document, not a chat transcript. The
-            highest priority is always what this means, what to do next, and how much
-            urgency exists.
-          </p>
+    <section className="fade-up-1 space-y-4">
+      {/* Header bar */}
+      <div className="glass-panel-raised rounded-[var(--radius-lg)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="relative h-10 w-10 shrink-0">
+            <div className="absolute inset-0 rounded-xl bg-[var(--gold-glow)] border border-[var(--gold-line)] flex items-center justify-center">
+              <span className="text-[var(--gold)] text-base">⚖</span>
+            </div>
+          </div>
+          <div>
+            <p className="font-[family:var(--font-display)] text-lg text-[var(--foreground)] leading-tight">Action Report</p>
+            <p className="text-xs text-[var(--muted)] mt-0.5">Applies to: {analysis.appliesTo}</p>
+          </div>
         </div>
 
-        <div
-          className={`inline-flex w-fit items-center rounded-full border px-4 py-2 text-sm font-semibold ${
-            urgencyTone[analysis.urgency]
-          }`}
-        >
-          {analysis.urgency} urgency
+        <div className="flex items-center gap-3">
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold tracking-widest ${cfg.cls}`}>
+            <span>{cfg.icon}</span> {cfg.label}
+          </span>
+          <button
+            onClick={copyActions}
+            className="rounded-full border border-[var(--line-strong)] bg-[var(--faint)] px-3 py-1.5 text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:border-[var(--gold-line)] transition-all"
+          >
+            {copied ? "✓ Copied" : "Copy report"}
+          </button>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <div className="data-card p-4">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Deadline
-          </p>
-          <p className="mt-3 text-lg font-semibold leading-7">{analysis.deadline}</p>
+      {/* Deadline + Confidence row */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="data-card p-4 rounded-[var(--radius)]">
+          <p className="field-label">Deadline</p>
+          <p className="mt-2 text-sm font-semibold text-[var(--foreground)] leading-6">{analysis.deadline}</p>
         </div>
-        <div className="data-card p-4">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Applies to
-          </p>
-          <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-            {analysis.appliesTo}
-          </p>
-        </div>
-        <div className="data-card p-4">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Confidence
-          </p>
-          <p className="mt-3 text-sm leading-7 text-[var(--muted)]">
-            {analysis.confidence}
-          </p>
+        <div className="data-card p-4 rounded-[var(--radius)]">
+          <p className="field-label">Confidence</p>
+          <p className="mt-2 text-xs text-[var(--foreground-2)] leading-6">{analysis.confidence}</p>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
-        <div className="data-card p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            What this means
-          </p>
-          <p className="mt-4 text-base leading-8 text-[var(--foreground)]">
-            {analysis.summary}
-          </p>
-        </div>
-        <div className="data-card p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Next step
-          </p>
-          <p className="mt-4 text-base leading-8 text-[var(--foreground)]">
-            {analysis.nextStep}
-          </p>
-        </div>
+      {/* Summary */}
+      <div className="data-card rounded-[var(--radius)] p-5 border-l-2 border-l-[var(--gold)]">
+        <p className="field-label mb-3">What this means</p>
+        <p className="text-sm leading-7 text-[var(--foreground)]">{analysis.summary}</p>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="data-card p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Actions
-          </p>
-          <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--foreground)]">
-            {analysis.actions.map((action) => (
-              <li key={action} className="flex gap-3">
-                <span className="mt-2 h-2 w-2 rounded-full bg-[var(--accent)]" />
+      {/* Next step */}
+      <div className="rounded-[var(--radius)] border border-[var(--teal-glow)] bg-[rgba(42,107,94,0.08)] p-5">
+        <p className="field-label mb-3" style={{ color: "#4aad97" }}>Next step</p>
+        <p className="text-sm leading-7 text-[var(--foreground)]">{analysis.nextStep}</p>
+      </div>
+
+      {/* Actions + Risks */}
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="data-card rounded-[var(--radius)] p-5">
+          <p className="field-label mb-3">Actions required</p>
+          <ul className="space-y-3">
+            {analysis.actions.map((action, i) => (
+              <li key={i} className="flex gap-3 text-sm leading-6 text-[var(--foreground)]">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--gold-glow)] border border-[var(--gold-line)] text-[var(--gold)] text-[10px] font-bold">
+                  {i + 1}
+                </span>
                 <span>{action}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="data-card p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Risks if ignored
-          </p>
-          <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--foreground)]">
-            {analysis.risks.map((risk) => (
-              <li key={risk} className="flex gap-3">
-                <span className="mt-2 h-2 w-2 rounded-full bg-[var(--warning)]" />
+        <div className="data-card rounded-[var(--radius)] p-5">
+          <p className="field-label mb-3" style={{ color: "#e07060" }}>Risks if ignored</p>
+          <ul className="space-y-3">
+            {analysis.risks.map((risk, i) => (
+              <li key={i} className="flex gap-3 text-sm leading-6 text-[var(--foreground-2)]">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--danger)]" />
                 <span>{risk}</span>
               </li>
             ))}
@@ -110,28 +127,23 @@ export function ReportPanel({ analysis }: ReportPanelProps) {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="data-card p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-            Ambiguities
-          </p>
-          <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--muted)]">
-            {analysis.ambiguities.map((item) => (
-              <li key={item} className="flex gap-3">
-                <span className="mt-2 h-2 w-2 rounded-full bg-[rgba(25,53,43,0.24)]" />
+      {/* Ambiguities + Disclaimer */}
+      <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
+        <div className="data-card rounded-[var(--radius)] p-5">
+          <p className="field-label mb-3">Ambiguities & gaps</p>
+          <ul className="space-y-2">
+            {analysis.ambiguities.map((item, i) => (
+              <li key={i} className="flex gap-3 text-xs leading-6 text-[var(--foreground-2)]">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--muted)]" />
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-[1.75rem] border border-[rgba(180,87,63,0.18)] bg-[rgba(180,87,63,0.08)] p-5">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--warning)]">
-            Disclaimer
-          </p>
-          <p className="mt-4 text-sm leading-7 text-[var(--foreground)]">
-            {analysis.disclaimer}
-          </p>
+        <div className="rounded-[var(--radius)] border border-[var(--danger-line)] bg-[var(--danger-bg)] p-5">
+          <p className="field-label mb-3" style={{ color: "#e07060" }}>Disclaimer</p>
+          <p className="text-xs leading-6 text-[var(--foreground-2)]">{analysis.disclaimer}</p>
         </div>
       </div>
     </section>

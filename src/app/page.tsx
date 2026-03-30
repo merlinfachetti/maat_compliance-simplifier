@@ -1,431 +1,394 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ReportPanel } from "@/components/report-panel";
-import { sampleAnalysis } from "@/lib/analysis";
 
 export default function Home() {
-  const problemPoints = [
-    {
-      title: "Dense legal language hides the real task",
-      copy: "People often receive a notice full of jargon but still do not know what they need to do today, tomorrow, or this week.",
-    },
-    {
-      title: "Urgency is unclear until it is too late",
-      copy: "Deadlines, sanctions, and escalation risks are easy to miss when buried inside bureaucratic language and administrative references.",
-    },
-    {
-      title: "The cost of misunderstanding is high",
-      copy: "A missed response, wrong filing, or incomplete answer can trigger penalties, delays, or a second round of bureaucracy.",
-    },
-  ];
-
-  const deliverables = [
-    {
-      title: "Plain-language summary",
-      copy: "Explains what the document means without forcing the user to decode legal wording first.",
-    },
-    {
-      title: "Immediate actions",
-      copy: "Shows what needs to be done now, in order, with the practical next step clearly visible.",
-    },
-    {
-      title: "Deadline and urgency",
-      copy: "Highlights time sensitivity so the user can prioritize correctly instead of guessing.",
-    },
-    {
-      title: "Risk if ignored",
-      copy: "Makes the consequence of inaction explicit, which is often the main source of anxiety.",
-    },
-    {
-      title: "Ambiguity flags",
-      copy: "Calls out where the text is incomplete, unclear, or risky enough to deserve professional review.",
-    },
-    {
-      title: "Trust layer",
-      copy: "Keeps the output honest with disclaimers and clear boundaries around what the product does not claim.",
-    },
-  ];
-
-  const steps = [
-    "User pastes text or uploads a notice",
-    "Ma'at extracts the real obligation, urgency, and possible deadline",
-    "The system returns one structured report instead of a chat transcript",
-    "The user leaves knowing what to do next and where professional help may still be needed",
-  ];
-
-  const whatItIs = [
-    "A compliance simplifier for legal and bureaucratic text",
-    "An action-first interpretation layer",
-    "A product designed to reduce confusion, delay, and paralysis",
-  ];
-
-  const whatItIsNot = [
-    "Not a law firm",
-    "Not legal advice",
-    "Not a document storage vault in the MVP",
-    "Not a full compliance management suite on day one",
-  ];
-
-  const useCases = [
-    "Freelancers reading tax, VAT, insurance, or registration notices",
-    "Expats receiving residency, municipality, or immigration-related letters",
-    "Founders and micro-businesses handling compliance without internal legal support",
-  ];
-
-  const faqItems = [
-    {
-      question: "What problem does Ma'at solve?",
-      answer:
-        "It solves the moment when someone receives a dense legal or regulatory message and cannot quickly tell what it means, what to do now, how urgent it is, and what may happen if they ignore it.",
-    },
-    {
-      question: "What does the product actually deliver?",
-      answer:
-        "A structured action report with summary, urgency, deadline, actions, risks, ambiguity notes, and a clear disclaimer.",
-    },
-    {
-      question: "Is this legal advice?",
-      answer:
-        "No. Ma'at is designed to simplify and structure information, not replace a licensed professional. The product must always be explicit about this boundary.",
-    },
-    {
-      question: "Who is the first version built for?",
-      answer:
-        "The MVP is strongest for expats, freelancers, and very small businesses dealing with bureaucracy and compliance alone.",
-    },
-    {
-      question: "Why start with pay-per-analysis?",
-      answer:
-        "Because the fastest signal is whether someone will pay for immediate clarity in a high-stakes moment. A simple transaction is better than a complex subscription model in the first validation phase.",
-    },
-  ];
-
   return (
-    <main className="pb-24 pt-6 md:pb-32">
-      <div className="page-shell">
-        <header className="glass-panel rounded-full px-4 py-3 md:px-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <Image src="/maat.png" alt="Ma'at logo" width={42} height={42} priority />
-              <div>
-                <p className="font-[family:var(--font-display)] text-2xl leading-none">
-                  Ma&apos;at
-                </p>
-                <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">
-                  Compliance Simplifier
-                </p>
-              </div>
+    <main className="overflow-hidden">
+      {/* ─── NAV ─── */}
+      <nav className="sticky top-0 z-50 border-b border-[var(--line)] bg-[rgba(13,15,14,0.88)] backdrop-blur-2xl">
+        <div className="page-shell flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-9 w-9 overflow-hidden rounded-xl">
+              <Image src="/maat.png" alt="Ma'at" fill className="object-cover" priority />
+            </div>
+            <div className="leading-none">
+              <span className="font-[family:var(--font-display)] text-xl text-[var(--foreground)]">
+                Ma&apos;at
+              </span>
+              <span className="ml-2 text-xs text-[var(--muted)] tracking-widest uppercase">
+                Compliance
+              </span>
+            </div>
+          </Link>
+          <div className="hidden md:flex items-center gap-6 text-sm text-[var(--muted)]">
+            <a href="#how" className="hover:text-[var(--foreground)] transition-colors">How it works</a>
+            <a href="#pricing" className="hover:text-[var(--foreground)] transition-colors">Pricing</a>
+            <a href="#faq" className="hover:text-[var(--foreground)] transition-colors">FAQ</a>
+            <Link href="/analyze" className="primary-button px-5 py-2 text-sm">
+              Analyze a document →
             </Link>
-
-            <nav className="flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">
-              <a href="#problem">Problem</a>
-              <a href="#solution">Solution</a>
-              <a href="#works">How it works</a>
-              <a href="#faq">FAQ</a>
-              <a href="#pricing">Pricing</a>
-              <Link href="/analyze" className="primary-button px-5 py-2.5">
-                Open product
-              </Link>
-            </nav>
           </div>
-        </header>
+          <Link href="/analyze" className="primary-button px-4 py-2 text-sm md:hidden">
+            Analyze →
+          </Link>
+        </div>
+      </nav>
 
-        <section className="relative mt-8 overflow-hidden rounded-[2.5rem] border border-[var(--line)] bg-[rgba(255,250,242,0.76)] px-6 py-10 shadow-[var(--shadow)] md:px-10 md:py-14">
-          <div className="absolute inset-0 subtle-grid opacity-40" />
-          <div className="relative grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+      {/* ─── HERO ─── */}
+      <section className="relative pt-24 pb-20 md:pt-32 md:pb-28">
+        {/* Background decorations */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute top-[-10%] left-[10%] h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(201,144,60,0.07)_0%,transparent_70%)]" />
+          <div className="absolute bottom-[-5%] right-[5%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(42,107,94,0.06)_0%,transparent_70%)]" />
+        </div>
+
+        <div className="page-shell relative">
+          <div className="max-w-4xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--gold-line)] bg-[var(--gold-glow)] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--gold)] mb-8">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)] pulse-gold" />
+              AI-powered compliance intelligence
+            </div>
+
+            <h1 className="font-[family:var(--font-display)] text-5xl md:text-7xl leading-[1.0] tracking-tight text-[var(--foreground)] mb-6">
+              Stop guessing what{" "}
+              <span className="text-[var(--gold)]">bureaucracy</span>{" "}
+              actually wants from you.
+            </h1>
+
+            <p className="section-copy text-lg md:text-xl max-w-2xl mb-10">
+              Ma&apos;at reads your legal notices, tax letters, and compliance requests — then tells you exactly what to do, by when, and what happens if you don&apos;t.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <Link href="/analyze" className="primary-button text-base px-8 py-4">
+                Analyze a document now →
+              </Link>
+              <a href="#how" className="secondary-button text-base px-8 py-4">
+                See how it works
+              </a>
+            </div>
+
+            <div className="flex flex-wrap gap-6 text-sm text-[var(--muted)]">
+              {["Not legal advice", "No account required", "Results in under 60s", "PDF & text supported"].map((tag) => (
+                <span key={tag} className="flex items-center gap-2">
+                  <span className="text-[var(--gold)]">✦</span> {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Sample report preview */}
+          <div className="mt-16 grid gap-3 md:grid-cols-4">
+            {[
+              { label: "Urgency", value: "High", sub: "deadline in 14 days", accent: "var(--danger)" },
+              { label: "Actions", value: "3", sub: "concrete steps", accent: "var(--gold)" },
+              { label: "Risks", value: "2", sub: "if ignored", accent: "#e07060" },
+              { label: "Confidence", value: "Medium", sub: "from text pattern", accent: "var(--teal-2)" },
+            ].map((stat) => (
+              <div key={stat.label} className="data-card p-5 rounded-[var(--radius)]">
+                <p className="field-label">{stat.label}</p>
+                <p className="font-[family:var(--font-display)] text-2xl mt-2" style={{ color: stat.accent }}>
+                  {stat.value}
+                </p>
+                <p className="text-xs text-[var(--muted)] mt-1">{stat.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="gold-divider" />
+
+      {/* ─── PROBLEM ─── */}
+      <section className="py-24">
+        <div className="page-shell">
+          <div className="max-w-2xl mb-14">
+            <p className="section-kicker mb-4">The real problem</p>
+            <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight">
+              Legal documents are designed for lawyers, not for you.
+            </h2>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              {
+                icon: "⚖",
+                title: "Dense language hides the real task",
+                copy: "Jargon and references obscure what you actually need to do — and by when. Most people read three times and still aren't sure.",
+              },
+              {
+                icon: "⏰",
+                title: "Urgency is invisible until it's too late",
+                copy: "Deadlines, fines, and escalation risks are buried in administrative language. You only notice them after the window has closed.",
+              },
+              {
+                icon: "💸",
+                title: "Misunderstanding is expensive",
+                copy: "Wrong filing, missed response, incomplete answer. Each mistake can trigger penalties, delays, or a second round of bureaucracy.",
+              },
+            ].map((card) => (
+              <div key={card.title} className="glass-panel rounded-[var(--radius-lg)] p-7">
+                <span className="text-3xl">{card.icon}</span>
+                <h3 className="font-semibold text-lg mt-4 mb-3 text-[var(--foreground)]">{card.title}</h3>
+                <p className="text-sm leading-7 text-[var(--foreground-2)]">{card.copy}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="gold-divider" />
+
+      {/* ─── HOW IT WORKS ─── */}
+      <section id="how" className="py-24">
+        <div className="page-shell">
+          <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="section-kicker">Compliance clarity for real life</p>
-              <h1 className="section-title mt-5 max-w-3xl">
-                Understand the notice before it becomes a mistake.
-              </h1>
-              <p className="section-copy mt-6 max-w-2xl">
-                Ma&apos;at helps people who receive legal, regulatory, or bureaucratic text
-                and need clarity fast. Instead of forcing users to decode jargon, the
-                product turns the document into a structured report with meaning, urgency,
-                actions, deadlines, and risk.
+              <p className="section-kicker mb-4">How Ma&apos;at works</p>
+              <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight mb-6">
+                One document in. One clear report out.
+              </h2>
+              <p className="section-copy mb-10">
+                No chat interface. No vague summaries. Ma&apos;at reads the document and returns a decision report structured for action — not for reading.
               </p>
-
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/analyze" className="primary-button">
-                  Go to product
-                </Link>
-                <a href="#solution" className="secondary-button">
-                  Understand the offer
-                </a>
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-3 text-sm text-[var(--muted)]">
-                <span className="rounded-full border border-[var(--line)] bg-[rgba(255,251,246,0.76)] px-4 py-2">
-                  Not legal advice
-                </span>
-                <span className="rounded-full border border-[var(--line)] bg-[rgba(255,251,246,0.76)] px-4 py-2">
-                  Action-first output
-                </span>
-                <span className="rounded-full border border-[var(--line)] bg-[rgba(255,251,246,0.76)] px-4 py-2">
-                  Clear scope and limits
-                </span>
-              </div>
-
-              <div className="mt-10 grid gap-4 md:grid-cols-3">
-                <div className="data-card p-4">
-                  <p className="text-3xl font-semibold">Meaning</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    what the notice is really asking for
-                  </p>
-                </div>
-                <div className="data-card p-4">
-                  <p className="text-3xl font-semibold">Priority</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    what must be done now and by when
-                  </p>
-                </div>
-                <div className="data-card p-4">
-                  <p className="text-3xl font-semibold">Trust</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    honest scope, risk, and escalation signals
-                  </p>
-                </div>
+              <div className="space-y-4">
+                {[
+                  { n: "01", title: "Paste text or upload a PDF", desc: "Drop your notice, tax letter, or any legal communication." },
+                  { n: "02", title: "Ma'at interprets the document", desc: "The AI extracts obligations, urgency, deadlines, and risks." },
+                  { n: "03", title: "Receive your action report", desc: "A structured report with what to do, when, and what's at stake." },
+                  { n: "04", title: "Act with confidence", desc: "Copy actions, download the report, or seek professional review where flagged." },
+                ].map((step) => (
+                  <div key={step.n} className="flex gap-5 items-start p-4 rounded-[var(--radius)] border border-[var(--line)] bg-[var(--surface)]">
+                    <span className="font-[family:var(--font-display)] text-[var(--gold)] text-xl font-bold shrink-0 w-8">{step.n}</span>
+                    <div>
+                      <p className="font-semibold text-[var(--foreground)] text-sm">{step.title}</p>
+                      <p className="text-xs text-[var(--foreground-2)] mt-1 leading-6">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="glass-panel rounded-[2rem] p-5">
-                <div className="flex items-center gap-4">
-                  <div className="overflow-hidden rounded-2xl border border-[var(--line)]">
-                    <Image src="/user.jpg" alt="User portrait" width={72} height={72} />
+              <div className="glass-panel rounded-[var(--radius-lg)] p-6 border border-[var(--gold-line)]">
+                <p className="section-kicker mb-4">Sample output</p>
+                <div className="space-y-4">
+                  <div className="rounded-[var(--radius-sm)] bg-[var(--danger-bg)] border border-[var(--danger-line)] px-4 py-3">
+                    <p className="text-xs uppercase tracking-widest text-[#e07060] font-semibold mb-1">Urgency</p>
+                    <p className="text-[var(--foreground)] font-semibold">High — deadline within 14 days</p>
                   </div>
-                  <div>
-                    <p className="font-semibold">Typical user moment</p>
-                    <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
-                      &quot;I received an official notice, I am not fully sure what it means,
-                      and I need to know what happens if I do nothing.&quot;
+                  <div className="data-card p-4">
+                    <p className="field-label">What this means</p>
+                    <p className="text-sm text-[var(--foreground-2)] mt-2 leading-6">
+                      You have received a formal VAT compliance request. The authority requires your Q4 declaration and supporting documents within the stated period.
                     </p>
                   </div>
-                </div>
-              </div>
-              <ReportPanel analysis={sampleAnalysis} />
-            </div>
-          </div>
-        </section>
-
-        <section id="problem" className="mt-20">
-          <div className="max-w-3xl">
-            <p className="section-kicker">The problem</p>
-            <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-              Bureaucracy is expensive when it is confusing.
-            </h2>
-            <p className="section-copy mt-5">
-              Most users are not looking for a legal platform. They are looking for fast
-              orientation in a high-stakes moment. The real pain is not just the document.
-              It is the uncertainty around what to do, how urgent it is, and what the risk
-              of inaction might be.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {problemPoints.map((item) => (
-              <article key={item.title} className="glass-panel rounded-[2rem] p-6">
-                <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                  Pain point
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-                  {item.copy}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="solution" className="mt-20">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-            <div className="glass-panel rounded-[2rem] p-6 md:p-8">
-              <p className="section-kicker">What the product is</p>
-              <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-                A focused layer of interpretation and action.
-              </h2>
-              <ul className="mt-8 space-y-4">
-                {whatItIs.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-[1.5rem] border border-[var(--line)] bg-[rgba(255,251,246,0.72)] px-5 py-4 text-sm leading-7 text-[var(--foreground)]"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="glass-panel rounded-[2rem] p-6 md:p-8">
-              <p className="section-kicker">What the product is not</p>
-              <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-                Clear boundaries create trust.
-              </h2>
-              <ul className="mt-8 space-y-4">
-                {whatItIsNot.map((item) => (
-                  <li
-                    key={item}
-                    className="rounded-[1.5rem] border border-[rgba(180,87,63,0.18)] bg-[rgba(180,87,63,0.06)] px-5 py-4 text-sm leading-7 text-[var(--foreground)]"
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-20">
-          <div className="max-w-3xl">
-            <p className="section-kicker">What it delivers</p>
-            <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-              The value is not the AI. The value is clarity with direction.
-            </h2>
-            <p className="section-copy mt-5">
-              Ma&apos;at should answer the questions users actually have in the moment of
-              stress: What does this mean? What do I need to do? How urgent is it? What
-              happens if I ignore it? Where is the uncertainty?
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {deliverables.map((item) => (
-              <article key={item.title} className="glass-panel rounded-[2rem] p-6">
-                <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                  Output
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold">{item.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-[var(--muted)]">{item.copy}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="works" className="mt-20 grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="glass-panel rounded-[2rem] p-6 md:p-8">
-            <p className="section-kicker">How it works</p>
-            <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-              One path in, one clear report out.
-            </h2>
-            <div className="mt-8 space-y-4">
-              {steps.map((step, index) => (
-                <div
-                  key={step}
-                  className="flex items-start gap-4 rounded-[1.5rem] border border-[var(--line)] bg-[rgba(255,251,246,0.72)] p-4"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary)] text-sm font-semibold text-[#f6efe4]">
-                    {index + 1}
+                  <div className="data-card p-4">
+                    <p className="field-label">Actions</p>
+                    <ul className="mt-2 space-y-2">
+                      {[
+                        "Prepare Q4 VAT declaration with all invoice records",
+                        "Submit via the official tax portal before the deadline",
+                        "Save confirmation of submission as evidence",
+                      ].map((a) => (
+                        <li key={a} className="flex gap-2 text-xs text-[var(--foreground-2)] leading-5">
+                          <span className="text-[var(--gold)] mt-0.5 shrink-0">→</span> {a}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <p className="pt-1 text-sm leading-7 text-[var(--foreground)]">{step}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass-panel rounded-[2rem] p-6 md:p-8">
-            <p className="section-kicker">Who it serves best</p>
-            <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-              Built for people who have to act, not just browse.
-            </h2>
-            <ul className="mt-8 space-y-4">
-              {useCases.map((audience) => (
-                <li
-                  key={audience}
-                  className="rounded-[1.5rem] border border-[var(--line)] bg-[rgba(255,251,246,0.72)] px-5 py-4 text-sm leading-7 text-[var(--foreground)]"
-                >
-                  {audience}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section id="pricing" className="mt-20">
-          <div className="glass-panel rounded-[2.4rem] px-6 py-8 md:px-8 md:py-10">
-            <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-end">
-              <div>
-                <p className="section-kicker">Commercial logic</p>
-                <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-                  Start simple: one useful answer, one paid moment.
-                </h2>
-                <p className="section-copy mt-5 max-w-2xl">
-                  The first goal is to validate whether users will pay for immediate clarity
-                  in a high-stakes moment. Complex subscriptions and heavy dashboards can
-                  come later, after the value is proven.
-                </p>
-              </div>
-
-              <div className="data-card p-6">
-                <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
-                  Initial pricing hypothesis
-                </p>
-                <p className="mt-4 font-[family:var(--font-display)] text-6xl leading-none">
-                  €9
-                </p>
-                <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
-                  One structured report with summary, actions, deadline, risks, and
-                  disclaimer. Credit packs and recurring compliance features come later.
-                </p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="faq" className="mt-20">
-          <div className="max-w-3xl">
-            <p className="section-kicker">FAQ</p>
-            <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-              The landing page should remove uncertainty before the user clicks.
+      <div className="gold-divider" />
+
+      {/* ─── WHO IT'S FOR ─── */}
+      <section className="py-24">
+        <div className="page-shell">
+          <div className="max-w-2xl mb-14">
+            <p className="section-kicker mb-4">Who it serves</p>
+            <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight">
+              Built for people who handle compliance alone.
+            </h2>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              {
+                icon: "✈",
+                who: "Expats in Europe",
+                copy: "Residency letters, municipality registrations, immigration notices, Anmeldung, tax obligations in a foreign language.",
+              },
+              {
+                icon: "💼",
+                who: "Freelancers & self-employed",
+                copy: "VAT notices, income tax requests, insurance requirements, social security obligations — without an accountant on speed dial.",
+              },
+              {
+                icon: "🚀",
+                who: "Early-stage founders",
+                copy: "Business compliance requests, regulatory filings, government correspondence — without a legal team to decode them.",
+              },
+            ].map((card) => (
+              <div key={card.who} className="glass-panel rounded-[var(--radius-lg)] p-7 group hover:border-[var(--gold-line)] transition-colors">
+                <span className="text-3xl">{card.icon}</span>
+                <h3 className="font-[family:var(--font-display)] text-xl mt-4 mb-3 text-[var(--foreground)]">{card.who}</h3>
+                <p className="text-sm leading-7 text-[var(--foreground-2)]">{card.copy}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="gold-divider" />
+
+      {/* ─── WHAT IT DELIVERS ─── */}
+      <section className="py-24">
+        <div className="page-shell">
+          <div className="max-w-2xl mb-14">
+            <p className="section-kicker mb-4">Every report includes</p>
+            <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight">
+              Everything you need to act. Nothing you don&apos;t.
+            </h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {[
+              { label: "Plain-language summary", desc: "What the document is actually asking, without jargon." },
+              { label: "Deadline & urgency level", desc: "How time-sensitive the situation is and when you need to act." },
+              { label: "Concrete action list", desc: "Step-by-step: what to do, in order, right now." },
+              { label: "Risks if ignored", desc: "What happens if you do nothing — fines, escalation, status impact." },
+              { label: "Ambiguity flags", desc: "Where the text is unclear or where professional review makes sense." },
+              { label: "Confidence indicator", desc: "Honest signal on how certain the interpretation is." },
+            ].map((item) => (
+              <div key={item.label} className="data-card p-5 rounded-[var(--radius)]">
+                <p className="text-[var(--gold)] text-xs uppercase tracking-widest font-semibold mb-2">Output</p>
+                <p className="font-semibold text-[var(--foreground)] mb-2">{item.label}</p>
+                <p className="text-xs text-[var(--foreground-2)] leading-6">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="gold-divider" />
+
+      {/* ─── PRICING ─── */}
+      <section id="pricing" className="py-24">
+        <div className="page-shell">
+          <div className="max-w-xl mx-auto text-center mb-12">
+            <p className="section-kicker mb-4">Pricing</p>
+            <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight">
+              Simple. One report, one price.
             </h2>
           </div>
 
-          <div className="mt-10 space-y-4">
-            {faqItems.map((item) => (
-              <details key={item.question} className="glass-panel rounded-[1.8rem] p-6">
-                <summary className="cursor-pointer list-none text-lg font-semibold">
-                  {item.question}
+          <div className="max-w-md mx-auto">
+            <div className="glass-panel-raised rounded-[var(--radius-xl)] p-8 border border-[var(--gold-line)] text-center">
+              <p className="field-label mb-4">Pay per analysis</p>
+              <div className="flex items-end justify-center gap-1 mb-2">
+                <span className="font-[family:var(--font-display)] text-6xl text-[var(--gold)]">€9</span>
+                <span className="text-[var(--muted)] pb-2">per report</span>
+              </div>
+              <p className="text-sm text-[var(--foreground-2)] mb-8 leading-6">
+                One structured action report — summary, urgency, actions, deadline, risks, and disclaimer. No subscription. No account required.
+              </p>
+              <Link href="/analyze" className="primary-button w-full text-base py-4 justify-center">
+                Analyze your document →
+              </Link>
+              <p className="mt-4 text-xs text-[var(--muted)]">
+                Credit packs and recurring compliance features coming soon.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="gold-divider" />
+
+      {/* ─── FAQ ─── */}
+      <section id="faq" className="py-24">
+        <div className="page-shell max-w-3xl mx-auto">
+          <p className="section-kicker mb-4 text-center">FAQ</p>
+          <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight text-center mb-12">
+            Common questions
+          </h2>
+          <div className="space-y-3">
+            {[
+              {
+                q: "Is this legal advice?",
+                a: "No. Ma'at interprets and structures information to help you understand what a document is asking. It does not replace a licensed legal professional. The disclaimer is always explicit in every report.",
+              },
+              {
+                q: "What types of documents can I analyze?",
+                a: "Tax notices, residency and immigration letters, VAT requests, government compliance letters, insurance and payroll requirements, business registration notices — any text-based legal or regulatory communication.",
+              },
+              {
+                q: "How accurate is the analysis?",
+                a: "Ma'at uses a large language model to interpret documents. Accuracy depends on the quality and completeness of the input text. Every report includes a confidence indicator and ambiguity flags to guide you on when professional review is advisable.",
+              },
+              {
+                q: "Is my document stored?",
+                a: "No. Documents are processed ephemerally and not stored. Ma'at does not retain your text after the analysis is returned.",
+              },
+              {
+                q: "Why pay per analysis instead of a subscription?",
+                a: "Most people don't receive compliance notices daily. Pay-per-analysis means you only pay when you actually need clarity — no idle subscription charges.",
+              },
+            ].map((item) => (
+              <details key={item.q} className="glass-panel rounded-[var(--radius)] p-5 group cursor-pointer">
+                <summary className="list-none flex items-center justify-between font-semibold text-[var(--foreground)] select-none">
+                  {item.q}
+                  <span className="text-[var(--gold)] text-lg ml-4 shrink-0">+</span>
                 </summary>
-                <p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted)]">
-                  {item.answer}
-                </p>
+                <p className="mt-4 text-sm text-[var(--foreground-2)] leading-7">{item.a}</p>
               </details>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="mt-20 rounded-[2.5rem] border border-[var(--line)] bg-[rgba(25,53,43,0.96)] px-6 py-10 text-[#f6efe4] md:px-10 md:py-12">
-          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div>
-              <p className="section-kicker text-[rgba(246,239,228,0.68)]">
-                Ready to explore the product
-              </p>
-              <h2 className="mt-4 font-[family:var(--font-display)] text-5xl leading-none">
-                The landing explains the promise. The product shows the experience.
-              </h2>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-[rgba(246,239,228,0.74)]">
-                This page is here to qualify the click. The `/analyze` flow is where the
-                user experiences the product logic directly and sees how Ma&apos;at turns a
-                confusing notice into an action report.
-              </p>
+      {/* ─── CTA ─── */}
+      <section className="py-20 mb-0">
+        <div className="page-shell">
+          <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-[var(--gold-line)] bg-[var(--gold-glow)] px-8 py-14 text-center">
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute inset-0 subtle-grid opacity-30" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-2/3 bg-gradient-to-r from-transparent via-[var(--gold)] to-transparent opacity-40" />
             </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-              <Link
-                href="/analyze"
-                className="primary-button bg-[#f6efe4] text-[var(--primary)]"
-              >
-                Open product
+            <div className="relative">
+              <p className="section-kicker mb-4">Ready to understand your document?</p>
+              <h2 className="font-[family:var(--font-display)] text-4xl md:text-5xl text-[var(--foreground)] leading-tight mb-6 max-w-2xl mx-auto">
+                Get your action report in under 60 seconds.
+              </h2>
+              <p className="section-copy max-w-xl mx-auto mb-8">
+                Paste the text. Ma&apos;at does the rest.
+              </p>
+              <Link href="/analyze" className="primary-button text-base px-10 py-4">
+                Analyze a document now →
               </Link>
-              <a
-                href="#faq"
-                className="secondary-button border-white/15 bg-white/6 text-[#f6efe4]"
-              >
-                Review FAQ
-              </a>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ─── */}
+      <footer className="border-t border-[var(--line)] py-8">
+        <div className="page-shell flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[var(--muted)]">
+          <div className="flex items-center gap-2">
+            <Image src="/maat.png" alt="Ma'at" width={20} height={20} className="opacity-60" />
+            <span>Ma&apos;at — Compliance Simplifier</span>
+          </div>
+          <p>Not legal advice. Results do not replace a licensed professional.</p>
+          <div className="flex gap-4">
+            <a href="#faq" className="hover:text-[var(--foreground)] transition-colors">FAQ</a>
+            <a href="#pricing" className="hover:text-[var(--foreground)] transition-colors">Pricing</a>
+            <Link href="/analyze" className="hover:text-[var(--gold)] transition-colors">Analyze</Link>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
