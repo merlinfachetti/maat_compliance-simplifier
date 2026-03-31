@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import type { ComplianceAnalysis } from "@/lib/analysis";
+import {
+  COOKIE_FREE,
+  COOKIE_ACCESS,
+  parseAccessToken,
+  serializeAccessToken,
+} from "@/lib/access";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
@@ -31,11 +38,28 @@ Rules:
 - The disclaimer is always exactly: "Ma'at simplifies compliance language into structured actions. This is not legal advice and does not replace a licensed professional."`;
 
 export async function POST(request: Request) {
-  if (!ANTHROPIC_API_KEY) {
+  // ── Access control ──────────────────────────────────────
+  const cookieStore = await cookies();
+  const freeUsedCookie = cookieStore.get(COOKIE_FREE)?.value;
+  const accessCookie = cookieStore.get(COOKIE_ACCESS)?.value;
+
+  const freeAlreadyUsed = freeUsedCookie === "1";
+  const accessToken = parseAccessToken(accessCookie);
+  const hasPaidAccess = accessToken !== null && accessToken.remaining > 0;
+
+  if (freeAlreadyUsed && !hasPaidAccess) {
     return NextResponse.json(
-      { error: "Analysis service is not configured." },
-      { status: 503 }
+      {
+        error: "free_limit_reached",
+        message: "You have used your free analysis. Purchase a credit pack to continue.",
+      },
+      { status: 402 }
     );
+  }
+
+  // ── Validate input ───────────────────────────────────────
+  if (!ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: "Analysis service is not configured." }, { status: 503 });
   }
 
   let body: {
@@ -58,14 +82,14 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-
   if (sourceText.length < 30) {
     return NextResponse.json(
-      { error: "The text is too short to analyze. Please paste the full document." },
+      { error: "The text is too short. Please paste the full document." },
       { status: 400 }
     );
   }
 
+  // ── Call Claude ──────────────────────────────────────────
   const userMessage = `Document type: ${body.documentType || "Unknown"}
 Region/Country: ${body.region || "Not specified"}
 User concern: ${body.concern || "Not specified"}
@@ -76,6 +100,8 @@ ${sourceText.slice(0, 8000)}
 """
 
 Analyze this document and return the structured JSON report.`;
+
+  let analysis: ComplianceAnalysis;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -94,8 +120,7 @@ Analyze this document and return the structured JSON report.`;
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("Anthropic API error:", response.status, errorData);
+      console.error("Anthropic API error:", response.status);
       return NextResponse.json(
         { error: "The analysis engine returned an error. Try again in a moment." },
         { status: 502 }
@@ -105,12 +130,10 @@ Analyze this document and return the structured JSON report.`;
     const data = await response.json();
     const rawText = data?.content?.[0]?.text ?? "";
 
-    let analysis: ComplianceAnalysis;
     try {
       const cleaned = rawText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       analysis = JSON.parse(cleaned);
     } catch {
-      console.error("Failed to parse Claude response:", rawText);
       return NextResponse.json(
         { error: "The analysis could not be structured. Please try again." },
         { status: 500 }
@@ -125,16 +148,36 @@ Analyze this document and return the structured JSON report.`;
     }
 
     const validUrgency = ["High", "Medium", "Low"];
-    if (!validUrgency.includes(analysis.urgency)) {
-      analysis.urgency = "Medium";
-    }
-
-    return NextResponse.json({ analysis });
+    if (!validUrgency.includes(analysis.urgency)) analysis.urgency = "Medium";
   } catch (err) {
     console.error("Analysis route error:", err);
-    return NextResponse.json(
-      { error: "An unexpected error occurred. Please try again." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "An unexpected error occurred." }, { status: 500 });
   }
+
+  // ── Deduct credit / mark free used ──────────────────────
+  const res = NextResponse.json({ analysis });
+
+  const cookieOpts = {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+  };
+
+  if (!freeAlreadyUsed) {
+    // Mark free analysis as consumed
+    res.cookies.set(COOKIE_FREE, "1", {
+      ...cookieOpts,
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+    });
+  } else if (accessToken) {
+    // Decrement paid credit
+    const updated = { ...accessToken, remaining: accessToken.remaining - 1 };
+    res.cookies.set(COOKIE_ACCESS, serializeAccessToken(updated), {
+      ...cookieOpts,
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+
+  return res;
 }
