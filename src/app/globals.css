@@ -315,3 +315,88 @@ a {
 ::-webkit-scrollbar-track { background: var(--bg-2); }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gold-line); }
+
+/* ─── Mobile refinements ─── */
+@media (max-width: 640px) {
+  .page-shell {
+    width: calc(100% - 1.5rem);
+  }
+
+  .section-title {
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+    letter-spacing: -0.015em;
+  }
+
+  .primary-button, .secondary-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ─── Focus styles ─── */
+.field-input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─── Details/summary open state ─── */
+details[open] > summary > span:last-child {
+  transform: rotate(45deg);
+  display: inline-block;
+}
+
+details > summary > span:last-child {
+  transition: transform 200ms ease;
+}
+
+/* ─── Smooth page transitions ─── */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: page-in 0.35s ease forwards;
+}
+
+/* ─── Selection on dark inputs ─── */
+.field-input::selection {
+  background: rgba(201, 144, 60, 0.35);
+}
+
+/* ─── Gold shimmer on hover for data cards ─── */
+.data-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.data-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,144,60,0.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.data-card:hover::before {
+  opacity: 1;
+}
+
+/* ─── Spinner ─── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

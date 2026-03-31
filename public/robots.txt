@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://maat-compliance-simplifier.vercel.app/sitemap.xml
